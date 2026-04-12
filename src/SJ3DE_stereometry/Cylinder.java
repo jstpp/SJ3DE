@@ -13,8 +13,16 @@ public class Cylinder extends Space {
 
         for (float k = -h/2; k < h/2; k += gap) {
             for (double j = 0; j <= Math.PI; j += Math.PI/phiSteps) {
-                points.add(new Point((float)(root_x + a * Math.cos(j)), (float)(root_y+ b * Math.sin(j)), k+root_z));
-                points.add(new Point((float)(root_x + a * Math.cos(-j)), (float)(root_y+ b * Math.sin(-j)), k+root_z));
+                points.add(new Point((float)(root_x + a * Math.cos(j)), (float)(root_y + b * Math.sin(j)), k+root_z));
+                points.add(new Point((float)(root_x + a * Math.cos(-j)), (float)(root_y + b * Math.sin(-j)), k+root_z));
+            }
+        }
+        for (double j = 0; j <= Math.PI; j += Math.PI/phiSteps) {
+            for (float m = 0; m < 1; m += gap/Math.min(a, b)) {
+                points.add(new Point((float) (root_x + m * a * Math.cos(j)), (float) (root_y + m * b * Math.sin(j)), root_z + h / 2));
+                points.add(new Point((float) (root_x + m * a * Math.cos(-j)), (float) (root_y + m * b * Math.sin(-j)), root_z + h / 2));
+                points.add(new Point((float) (root_x + m * a * Math.cos(j)), (float) (root_y + m * b * Math.sin(j)), root_z - h / 2));
+                points.add(new Point((float) (root_x + m * a * Math.cos(-j)), (float) (root_y + m * b * Math.sin(-j)), root_z - h / 2));
             }
         }
     }

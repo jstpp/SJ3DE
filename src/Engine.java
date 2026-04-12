@@ -6,6 +6,7 @@ import SJ3DE_environment.Point;
 import SJ3DE_stereometry.*;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class Engine extends JPanel {
@@ -41,7 +42,9 @@ public class Engine extends JPanel {
 
         //objects.add(new Cuboid(50, 150, 300, 0, 0, 0));
         //objects.add(new Cylinder(150, 100, 300));
-        objects.add(new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180))));
+        Space trawa = new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180)));
+        trawa.materialSet(new Material("#3b8205"));
+        objects.add(trawa);
         for (Space object : objects)
         {
             System.out.println(object);
@@ -156,17 +159,27 @@ public class Engine extends JPanel {
             }
         }
     }
-
     public static void main(String[] args) {
         // Final Swing object
         JFrame frame = new JFrame("SJ3DE - Rendering result");
-        Engine panel = new Engine();
+        Engine render = new Engine();
+        JPanel settings = new JPanel();
 
-        JButton gui_open = new JButton("Menu");
-        gui_open.setBounds(10,10,100,50);
+        //Settings
+        JSlider f_slider = new JSlider(1, 20);
+        Hashtable labelTable = new Hashtable();
+        labelTable.put( new Integer( 1 ), new JLabel("1") );
+        labelTable.put( new Integer( 20 ), new JLabel("20") );
+        f_slider.setLabelTable( labelTable );
+        f_slider.setPaintLabels(true);
+        settings.add(f_slider);
 
-        frame.add(panel, BorderLayout.CENTER);
-        frame.add(gui_open, BorderLayout.SOUTH);
+        // Tabs
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab("View", render);
+        tabs.addTab("Settings", settings);
+
+        frame.add(tabs, BorderLayout.CENTER);
 
         frame.setSize(600,600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

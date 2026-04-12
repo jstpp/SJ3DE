@@ -1,13 +1,13 @@
 package SJ3DE_environment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Space extends Environment {
     protected Point root_point;
     private RenderExpression expr;
-    private Material material = new Material();
 
-    public List<Point> points;
+    public List<Point> points = new ArrayList<Point>();
 
     // Constructor
     public Space(float root_x, float root_y, float root_z, RenderExpression expr) {
@@ -15,9 +15,17 @@ public class Space extends Environment {
         this.expr = expr;
         generate();
     }
+    public Space(float root_x, float root_y, float root_z) {
+        this.root_point = new Point(root_x, root_y, root_z);
+        generate();
+    }
     public Space(RenderExpression expr) {
         this.root_point = new Point(0,0,0);
         this.expr = expr;
+        generate();
+    }
+    public Space() {
+        this.root_point = new Point(0,0,0);
         generate();
     }
 
@@ -29,5 +37,16 @@ public class Space extends Environment {
         } catch (Throwable whatever) {
             return false;
         }
+    }
+
+    public boolean materialSet(Material material) {
+        for (Point p : points) {
+            p.material = material;
+        }
+        return true;
+    }
+
+    public String toString() {
+        return "Space(root_point: " + root_point + "; expression: '" + expr + "')";
     }
 }

@@ -4,12 +4,21 @@ public class Point extends Environment {
     public float x;
     public float y;
     public float z;
+    public Material material = new Material();
 
     public Point(float x, float y, float z)
     {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public Point(float x, float y, float z, Material material)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.material = material;
     }
 
     // rotation along the X axis

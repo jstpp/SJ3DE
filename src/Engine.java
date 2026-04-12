@@ -18,8 +18,30 @@ public class Engine extends JPanel {
 
     public Engine() {
         // Initialize simple space
-        objects.add(new Sphere(20, 20, 50, 100));
-        objects.add(new Space(new RenderExpression("-20")));
+        Sphere sfera1 = new Sphere(100, 100, 200, 100);
+        sfera1.materialSet(new Material("#5a8205"));
+        objects.add(sfera1);
+
+        Sphere sfera2 = new Sphere(130, 80, 175, 100);
+        sfera2.materialSet(new Material("#5a8205"));
+        objects.add(sfera2);
+
+        Sphere sfera3 = new Sphere(190, 60, 240, 100);
+        sfera3.materialSet(new Material("#5a8205"));
+        objects.add(sfera3);
+
+        Sphere sfera4 = new Sphere(150, 140, 120, 100);
+        sfera4.materialSet(new Material("#5a8205"));
+        objects.add(sfera4);
+
+        Cylinder pien_drzewa = new Cylinder(30, 30, 400, 100, 80, 0);
+        pien_drzewa.materialSet(new Material("#441e16"));
+        objects.add(pien_drzewa);
+
+
+        //objects.add(new Cuboid(50, 150, 300, 0, 0, 0));
+        //objects.add(new Cylinder(150, 100, 300));
+        objects.add(new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180))));
         for (Space object : objects)
         {
             System.out.println(object);
@@ -68,26 +90,70 @@ public class Engine extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
         int width = getWidth();
         int height = getHeight();
 
         Graphics2D g2 = (Graphics2D) g;
+
         g2.setColor(Color.BLACK);
-        g2.fillRect(0,0,width,height);
+        g2.fillRect(0, 0, width, height);
+
+        double[][] zBuffer = new double[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                zBuffer[i][j] = Double.POSITIVE_INFINITY;
+            }
+        }
 
         for (SJ3DE_environment.Point p : points) {
-            SJ3DE_environment.Point pp = new SJ3DE_environment.Point(p.x, p.y, p.z);
+
+            SJ3DE_environment.Point pp = new SJ3DE_environment.Point(
+                    p.x,
+                    p.z,
+                    -p.y
+            );
+
             pp.rotateX(rotate_X);
             pp.rotateY(rotate_Y);
 
-            double scale = f / (pp.z + f + radius_from_point_zero*2);
-            int x2d = (int)(pp.x * scale + width/2);
-            int y2d = (int)(pp.y * scale + height/2);
+            double depth = pp.z;
 
-            float hue = (float)((pp.z + radius_from_point_zero) / (2*radius_from_point_zero));
-            g2.setColor(Color.getHSBColor(hue, 1f, 1f));
+            if (depth <= -f + 1) continue;
 
-            g2.fillOval(x2d, y2d, 5,5);
+            double scale = f / (depth + f);
+
+            int x2d = (int) (pp.x * scale + width / 2);
+            int y2d = (int) (-pp.y * scale + height / 2);
+
+            if (x2d < 0 || x2d >= width || y2d < 0 || y2d >= height) continue;
+
+            if (depth < zBuffer[x2d][y2d]) {
+                zBuffer[x2d][y2d] = depth;
+
+                g2.setColor(Color.decode(p.material.color));
+                int size = (int) p.material.thickness;
+
+                int radius = size / 2;
+
+                for (int dx = -radius; dx <= radius; dx++) {
+                    for (int dy = -radius; dy <= radius; dy++) {
+
+                        int px = x2d + dx;
+                        int py = y2d + dy;
+
+                        if (px < 0 || px >= width || py < 0 || py >= height) continue;
+
+
+                        if (depth < zBuffer[px][py]) {
+                            zBuffer[px][py] = depth;
+
+                            g2.setColor(Color.decode(p.material.color));
+                            g2.fillRect(px, py, 1, 1);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -96,7 +162,12 @@ public class Engine extends JPanel {
         JFrame frame = new JFrame("SJ3DE - Rendering result");
         Engine panel = new Engine();
 
-        frame.add(panel);
+        JButton gui_open = new JButton("Menu");
+        gui_open.setBounds(10,10,100,50);
+
+        frame.add(panel, BorderLayout.CENTER);
+        frame.add(gui_open, BorderLayout.SOUTH);
+
         frame.setSize(600,600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

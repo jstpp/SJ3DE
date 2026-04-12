@@ -5,5 +5,5 @@ My first attempt using Java for 3D data visualization.
 ![Screenshot 1](screenshots/S1.png)
 
 ### Goal
-A Java-based project for 3D data visualization from images and LiDAR measurements.
+Goal is to build 3D visualization tool, combining image data and LiDAR measurements. 
 

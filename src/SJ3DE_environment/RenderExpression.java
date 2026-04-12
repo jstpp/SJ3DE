@@ -9,7 +9,6 @@ public class RenderExpression extends Environment {
     private String expression;
     public Expression e;
     private Point root_point = new Point(0,0,0);
-    private float gap = 4;
     private List<RenderExpression> subexpressions = new ArrayList<RenderExpression>();
     private String expression_type = "+";
 
@@ -66,5 +65,9 @@ public class RenderExpression extends Environment {
             }
         }
         return points;
+    }
+
+    public String toString() {
+        return expression;
     }
 }

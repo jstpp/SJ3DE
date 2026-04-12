@@ -7,31 +7,50 @@ import java.util.List;
 
 public class Sphere extends Space {
     private float radius = 10;
+
     public Sphere(float root_x, float root_y, float root_z, float r) {
-        super(root_x, root_y, root_z, new RenderExpression("sqrt(" + r + "^2 - x^2 - y^2)", new Point(root_x, root_y, root_z)));
+        super(root_x, root_y, root_z);
         this.radius = r;
-        render_radius = r*1.1f;
-        generate();
-        List<SJ3DE_environment.Point> second_half = new ArrayList<SJ3DE_environment.Point>();
-        for (Point pt : points)
-        {
-            System.out.println(pt);
-            second_half.add(new Point(pt.x, pt.y, -pt.z));
+        int thetaSteps = 64;
+        int phiSteps = 64;
+
+        for (int i = 0; i <= thetaSteps; i++) {
+            double theta = Math.PI * i / thetaSteps;
+
+            for (int j = 0; j <= phiSteps; j++) {
+                double phi = 2 * Math.PI * j / phiSteps;
+
+                float x = (float)(root_point.x + radius * Math.sin(theta) * Math.cos(phi));
+                float y = (float)(root_point.y + radius * Math.sin(theta) * Math.sin(phi));
+                float z = (float)(root_point.z + radius * Math.cos(theta));
+                if(Float.isFinite(x) && Float.isFinite(y) && Float.isFinite(z)) {
+                    points.add(new Point(x, y, z));
+                }
+            }
         }
-        points.addAll(second_half);
     }
 
     public Sphere(float r) {
-        super(new RenderExpression("sqrt(" + r + "^2 - x^2 - y^2)"));
+        super(0,0,0);
         this.radius = r;
-        generate();
-        List<SJ3DE_environment.Point> second_half = new ArrayList<SJ3DE_environment.Point>();
-        for (Point pt : points)
-        {
-            second_half.add(new Point(pt.x, pt.y, -pt.z));
+        int thetaSteps = 30;
+        int phiSteps = 30;
+
+        for (int i = 0; i <= thetaSteps; i++) {
+            double theta = Math.PI * i / thetaSteps;
+
+            for (int j = 0; j <= phiSteps; j++) {
+                double phi = 2 * Math.PI * j / phiSteps;
+
+                float x = (float)(radius * Math.sin(theta) * Math.cos(phi));
+                float y = (float)(radius * Math.sin(theta) * Math.sin(phi));
+                float z = (float)(radius * Math.cos(theta));
+
+                points.add(new Point(x, y, z));
+            }
         }
-        points.addAll(second_half);
     }
+
 
     @Override
     public String toString() {

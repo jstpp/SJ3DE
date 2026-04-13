@@ -1,6 +1,9 @@
 package SJ3DE_environment;
 
-public class Point extends Environment {
+import java.io.Serializable;
+
+public class Point extends Environment implements Serializable {
+    private static final long serialVersionUID = 1L;
     public float x;
     public float y;
     public float z;

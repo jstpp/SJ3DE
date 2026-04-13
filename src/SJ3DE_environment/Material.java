@@ -1,6 +1,9 @@
 package SJ3DE_environment;
 
-public class Material {
+import java.io.Serializable;
+
+public class Material implements Serializable {
+    private static final long serialVersionUID = 1L;
     public String color;
     public float thickness = 5;
 

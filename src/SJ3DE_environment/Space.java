@@ -1,9 +1,11 @@
 package SJ3DE_environment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Space extends Environment {
+public class Space extends Environment implements Serializable {
+    private static final long serialVersionUID = 1L;
     protected Point root_point;
     private RenderExpression expr;
 

@@ -8,10 +8,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
 import java.util.List;
 
 public class LoadedStructuresPanel extends JPanel {
+    public DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project");
+    public DefaultTreeModel treeModel = new DefaultTreeModel(root);
 
     public LoadedStructuresPanel(List<Space> objects) {
         // Header
@@ -19,11 +21,9 @@ public class LoadedStructuresPanel extends JPanel {
         add(header);
 
         // Structures tree
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project");
         for (Space obj : objects) {
             root.add(new DefaultMutableTreeNode(obj));
         }
-        DefaultTreeModel treeModel = new DefaultTreeModel(root);
         JTree structures_tree = new JTree(treeModel);
         add(structures_tree);
         repaint();
@@ -36,11 +36,33 @@ public class LoadedStructuresPanel extends JPanel {
         addObjectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                JFileChooser j = new JFileChooser(new File("/home/jstpp/Desktop"), FileSystemView.getFileSystemView());
+                JFileChooser j = new JFileChooser(new File(System.getProperty("user.home")), FileSystemView.getFileSystemView());
                 j.showSaveDialog(null);
 
                 String filename = j.getSelectedFile().getAbsolutePath();
-                System.out.println(filename);
+                try {
+                    FileInputStream fileOut = new FileInputStream(filename);
+                    ObjectInputStream objOut = new ObjectInputStream(fileOut);
+                    objects.clear();
+                    while (true) {
+                        try {
+                            objects.add((Space) objOut.readObject());
+                        } catch (EOFException err) {
+                            break;
+                        }
+                    }
+                    objOut.close();
+
+                } catch (Exception ex) {
+                    System.out.println("File not found: " + ex.getLocalizedMessage());
+                } finally {
+                    root.removeAllChildren();
+                    for (Space obj : objects) {
+                        root.add(new DefaultMutableTreeNode(obj));
+                    }
+                    treeModel.reload();
+                    System.out.println("End.");
+                }
             }
         });
         removeObjectButton.addActionListener(new ActionListener() {
@@ -56,6 +78,27 @@ public class LoadedStructuresPanel extends JPanel {
 
                     treeModel.removeNodeFromParent(selectedNode);
                 }
+            }
+        });
+        saveObjectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                    JFileChooser j = new JFileChooser(new File(System.getProperty("user.home")), FileSystemView.getFileSystemView());
+                    j.showSaveDialog(null);
+
+                    String filename = j.getSelectedFile().getAbsolutePath();
+                    try {
+                        FileOutputStream fileOut = new FileOutputStream(filename);
+                        ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
+                        for(Space spc : objects)
+                        {
+                            objOut.writeObject(spc);
+                        }
+                        objOut.close();
+
+                    } catch (Exception ex) {
+                        System.out.println("File not found: " + ex.getLocalizedMessage());
+                    }
+                    System.out.println(filename);
             }
         });
 

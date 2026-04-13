@@ -1,13 +1,15 @@
 package SJ3DE_environment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
-public class RenderExpression extends Environment {
+public class RenderExpression extends Environment implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String expression;
-    public Expression e;
+    public transient Expression e;
     private Point root_point = new Point(0,0,0);
     private List<RenderExpression> subexpressions = new ArrayList<RenderExpression>();
     private String expression_type = "+";

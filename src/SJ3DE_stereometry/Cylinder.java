@@ -6,10 +6,15 @@ public class Cylinder extends Space {
     private float a;
     private float b;
     private float h;
+    private Point root_point = new Point(0,0,0);
 
     public Cylinder(float a, float b, float h, float root_x, float root_y, float root_z)
     {
         int phiSteps = 64;
+        this.a = a;
+        this.b = b;
+        this.h = h;
+        this.root_point = new Point(root_x, root_y, root_z);
 
         for (float k = -h/2; k < h/2; k += gap) {
             for (double j = 0; j <= Math.PI; j += Math.PI/phiSteps) {
@@ -29,6 +34,9 @@ public class Cylinder extends Space {
     public Cylinder(float a, float b, float h)
     {
         int phiSteps = 64;
+        this.a = a;
+        this.b = b;
+        this.h = h;
 
         for (float k = -h/2; k < h/2; k += gap) {
             for (double j = 0; j <= Math.PI; j += Math.PI/phiSteps) {

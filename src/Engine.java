@@ -4,6 +4,8 @@ import java.awt.event.*;
 import SJ3DE_environment.*;
 import SJ3DE_environment.Point;
 import SJ3DE_stereometry.*;
+import SJ3DE_ui.LoadedStructuresPanel;
+import SJ3DE_ui.SettingsPanel;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -11,13 +13,14 @@ import java.util.List;
 
 public class Engine extends JPanel {
     public List<SJ3DE_environment.Point> points = new ArrayList<SJ3DE_environment.Point>();
-    public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
+    public List<SJ3DE_environment.Space> objects;
     double rotate_X = 0;
     double rotate_Y = 0;
     double radius_from_point_zero = 50;
     double f = 100;
 
-    public Engine() {
+    public Engine(List<SJ3DE_environment.Space> objects) {
+        this.objects = objects;
         // Initialize simple space
         Sphere sfera1 = new Sphere(100, 100, 200, 100);
         sfera1.materialSet(new Material("#5a8205"));
@@ -45,11 +48,7 @@ public class Engine extends JPanel {
         Space trawa = new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180)));
         trawa.materialSet(new Material("#3b8205"));
         objects.add(trawa);
-        for (Space object : objects)
-        {
-            System.out.println(object);
-            points.addAll(object.points);
-        }
+
 
         // Mouse movements interpretation
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -96,6 +95,13 @@ public class Engine extends JPanel {
 
         int width = getWidth();
         int height = getHeight();
+
+        points.clear();
+        for (Space object : objects)
+        {
+            System.out.println(object);
+            points.addAll(object.points);
+        }
 
         Graphics2D g2 = (Graphics2D) g;
 
@@ -160,28 +166,22 @@ public class Engine extends JPanel {
         }
     }
     public static void main(String[] args) {
+        List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
+
         // Final Swing object
         JFrame frame = new JFrame("SJ3DE - Rendering result");
-        Engine render = new Engine();
-        JPanel settings = new JPanel();
-
-        //Settings
-        JSlider f_slider = new JSlider(1, 20);
-        Hashtable labelTable = new Hashtable();
-        labelTable.put( new Integer( 1 ), new JLabel("1") );
-        labelTable.put( new Integer( 20 ), new JLabel("20") );
-        f_slider.setLabelTable( labelTable );
-        f_slider.setPaintLabels(true);
-        settings.add(f_slider);
+        Engine render = new Engine(objects);
+        JPanel settings = new SettingsPanel();
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("View", render);
         tabs.addTab("Settings", settings);
+        tabs.addTab("Structures", new LoadedStructuresPanel(objects));
 
         frame.add(tabs, BorderLayout.CENTER);
 
-        frame.setSize(600,600);
+        frame.setSize(800,600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }

@@ -1,5 +1,6 @@
 package SJ3DE_ui;
 
+import SJ3DE_engine.Engine;
 import SJ3DE_environment.Space;
 
 import javax.swing.*;
@@ -9,19 +10,18 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.List;
 
 public class LoadedStructuresPanel extends JPanel {
     public DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project");
     public DefaultTreeModel treeModel = new DefaultTreeModel(root);
 
-    public LoadedStructuresPanel(List<Space> objects) {
+    public LoadedStructuresPanel(Engine engine) {
         // Header
         JLabel header = new JLabel("Import/Export");
         add(header);
 
         // Structures tree
-        for (Space obj : objects) {
+        for (Space obj : engine.objects) {
             root.add(new DefaultMutableTreeNode(obj));
         }
         JTree structures_tree = new JTree(treeModel);
@@ -43,25 +43,23 @@ public class LoadedStructuresPanel extends JPanel {
                 try {
                     FileInputStream fileOut = new FileInputStream(filename);
                     ObjectInputStream objOut = new ObjectInputStream(fileOut);
-                    objects.clear();
+                    engine.objects.clear();
                     while (true) {
                         try {
-                            objects.add((Space) objOut.readObject());
+                            engine.objects.add((Space) objOut.readObject());
                         } catch (EOFException err) {
                             break;
                         }
                     }
                     objOut.close();
-
-                } catch (Exception ex) {
-                    System.out.println("File not found: " + ex.getLocalizedMessage());
-                } finally {
                     root.removeAllChildren();
-                    for (Space obj : objects) {
+                    for (Space obj : engine.objects) {
                         root.add(new DefaultMutableTreeNode(obj));
                     }
                     treeModel.reload();
-                    System.out.println("End.");
+
+                } catch (Exception ex) {
+                    System.out.println("File not found: " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -73,7 +71,7 @@ public class LoadedStructuresPanel extends JPanel {
                 if (selectedNode != null && selectedNode.getParent() != null) {
                     Object userObject = selectedNode.getUserObject();
                     if (userObject instanceof Space) {
-                        objects.remove(userObject);
+                        engine.objects.remove(userObject);
                     }
 
                     treeModel.removeNodeFromParent(selectedNode);
@@ -89,7 +87,7 @@ public class LoadedStructuresPanel extends JPanel {
                     try {
                         FileOutputStream fileOut = new FileOutputStream(filename);
                         ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
-                        for(Space spc : objects)
+                        for(Space spc : engine.objects)
                         {
                             objOut.writeObject(spc);
                         }

@@ -1,3 +1,5 @@
+package SJ3DE_engine;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,18 +10,17 @@ import SJ3DE_ui.LoadedStructuresPanel;
 import SJ3DE_ui.SettingsPanel;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 public class Engine extends JPanel {
     public List<SJ3DE_environment.Point> points = new ArrayList<SJ3DE_environment.Point>();
-    public List<SJ3DE_environment.Space> objects;
+    public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
     double rotate_X = 0;
     double rotate_Y = 0;
     double radius_from_point_zero = 50;
-    double f = 100;
+    public double f = 1000;
 
-    public Engine(List<SJ3DE_environment.Space> objects) {
+    public Engine() {
         this.objects = objects;
         // Initialize simple space
         Sphere sfera1 = new Sphere(100, 100, 200, 100);
@@ -99,7 +100,7 @@ public class Engine extends JPanel {
         points.clear();
         for (Space object : objects)
         {
-            System.out.println(object);
+            //System.out.println(object);
             points.addAll(object.points);
         }
 
@@ -168,20 +169,38 @@ public class Engine extends JPanel {
     public static void main(String[] args) {
         List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
 
-        // Final Swing object
+        // Render tab setup
+        JPanel render_tab = new JPanel();
+        Engine render = new Engine();
+        render_tab.setLayout(new BorderLayout());
+        render_tab.add(render, BorderLayout.CENTER);
+        JPanel expression_pane_box = new JPanel();
+        JTextPane expression_pane = new JTextPane();
+        expression_pane.setPreferredSize(new Dimension(1000, 25));
+        JButton process_expression = new JButton("Add object");
+        process_expression.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                render.objects.add(new Space(0,0,0, new RenderExpression(expression_pane.getText(), new Point(0,0,0))));
+            }
+        });
+        expression_pane_box.add(expression_pane);
+        expression_pane_box.add(process_expression);
+        render_tab.add(expression_pane_box, BorderLayout.SOUTH);
+
+        // Main Swing objects setup
         JFrame frame = new JFrame("SJ3DE - Rendering result");
-        Engine render = new Engine(objects);
-        JPanel settings = new SettingsPanel();
+        JPanel settings = new SettingsPanel(render);
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("View", render);
+        tabs.addTab("View", render_tab);
         tabs.addTab("Settings", settings);
-        tabs.addTab("Structures", new LoadedStructuresPanel(objects));
+        tabs.addTab("Structures", new LoadedStructuresPanel(render));
 
         frame.add(tabs, BorderLayout.CENTER);
 
-        frame.setSize(800,600);
+        frame.setSize(1200,800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }

@@ -1,5 +1,8 @@
 package SJ3DE_environment;
 
+import SJ3DE_engine.Engine;
+
+import java.awt.*;
 import java.io.Serializable;
 
 public class Point extends Environment implements Serializable {
@@ -8,6 +11,7 @@ public class Point extends Environment implements Serializable {
     public float y;
     public float z;
     public Material material = new Material();
+    public Engine parent_engine;
 
     public Point(float x, float y, float z)
     {
@@ -44,6 +48,12 @@ public class Point extends Environment implements Serializable {
         double zNew = -x * sin + z * cos;
         x = (float)xNew;
         z = (float)zNew;
+    }
+
+    // rainbow displaying
+    public void rainbow() {
+        float hue = (float)((z + y + x + parent_engine.radius_from_point_zero) / (2*parent_engine.radius_from_point_zero));
+        this.material = new Material(Color.getHSBColor(hue, 1f, 1f));
     }
 
     @Override

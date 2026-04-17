@@ -1,12 +1,14 @@
 package SJ3DE_engine;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import SJ3DE_environment.*;
 import SJ3DE_environment.Point;
 import SJ3DE_stereometry.*;
 import SJ3DE_ui.LoadedStructuresPanel;
+import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ public class Engine extends JPanel {
     public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
     double rotate_X = 0;
     double rotate_Y = 0;
-    double radius_from_point_zero = 50;
+    public double radius_from_point_zero = 50;
     public double f = 1000;
 
     public Engine() {
@@ -117,7 +119,6 @@ public class Engine extends JPanel {
         }
 
         for (SJ3DE_environment.Point p : points) {
-
             SJ3DE_environment.Point pp = new SJ3DE_environment.Point(
                     p.x,
                     p.z,
@@ -141,7 +142,6 @@ public class Engine extends JPanel {
             if (depth < zBuffer[x2d][y2d]) {
                 zBuffer[x2d][y2d] = depth;
 
-                g2.setColor(Color.decode(p.material.color));
                 int size = (int) p.material.thickness;
 
                 int radius = size / 2;
@@ -158,7 +158,11 @@ public class Engine extends JPanel {
                         if (depth < zBuffer[px][py]) {
                             zBuffer[px][py] = depth;
 
-                            g2.setColor(Color.decode(p.material.color));
+                            if(p.material.color instanceof String) {
+                                g2.setColor(Color.decode((String)p.material.color));
+                            } else if (p.material.color instanceof Color) {
+                                g2.setColor((Color)p.material.color);
+                            }
                             g2.fillRect(px, py, 1, 1);
                         }
                     }
@@ -170,33 +174,17 @@ public class Engine extends JPanel {
         List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
 
         // Render tab setup
-        JPanel render_tab = new JPanel();
-        Engine render = new Engine();
-        render_tab.setLayout(new BorderLayout());
-        render_tab.add(render, BorderLayout.CENTER);
-        JPanel expression_pane_box = new JPanel();
-        JTextPane expression_pane = new JTextPane();
-        expression_pane.setPreferredSize(new Dimension(1000, 25));
-        JButton process_expression = new JButton("Add object");
-        process_expression.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                render.objects.add(new Space(0,0,0, new RenderExpression(expression_pane.getText(), new Point(0,0,0))));
-            }
-        });
-        expression_pane_box.add(expression_pane);
-        expression_pane_box.add(process_expression);
-        render_tab.add(expression_pane_box, BorderLayout.SOUTH);
+        RenderTab render_tab = new RenderTab();
 
         // Main Swing objects setup
         JFrame frame = new JFrame("SJ3DE - Rendering result");
-        JPanel settings = new SettingsPanel(render);
+        JPanel settings = new SettingsPanel(render_tab.getRender());
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("View", render_tab);
         tabs.addTab("Settings", settings);
-        tabs.addTab("Structures", new LoadedStructuresPanel(render));
+        tabs.addTab("Structures", new LoadedStructuresPanel(render_tab.getRender()));
 
         frame.add(tabs, BorderLayout.CENTER);
 

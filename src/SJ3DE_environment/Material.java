@@ -2,19 +2,22 @@ package SJ3DE_environment;
 
 import java.io.Serializable;
 
-public class Material implements Serializable {
+public class Material <T> implements Serializable {
     private static final long serialVersionUID = 1L;
-    public String color;
+    public T color;
     public float thickness = 5;
 
-    public Material(String color, float thickness) {
+    public Material(T color, float thickness) {
         this.color = color;
         this.thickness = thickness;
     }
-    public Material(String color) {
+    public Material(T color) {
         this.color = color;
     }
+    public Material(float thickness) {
+        this.thickness = thickness;
+    }
     public Material() {
-        this.color = "#ffffff";
+        this.color = (T)"#ffffff";
     }
 }

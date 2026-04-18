@@ -29,6 +29,7 @@ public class RenderTab extends JPanel {
                 }
                 render.objects.add(shape);
                 repaint();
+                LoadedStructuresPanel.update();
             }
         });
         expression_pane_box.add(expression_pane, BorderLayout.CENTER);

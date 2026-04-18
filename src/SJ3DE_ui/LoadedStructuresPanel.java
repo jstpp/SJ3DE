@@ -12,10 +12,12 @@ import java.awt.event.ActionListener;
 import java.io.*;
 
 public class LoadedStructuresPanel extends JPanel {
-    public DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project");
-    public DefaultTreeModel treeModel = new DefaultTreeModel(root);
+    public static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project");
+    public static DefaultTreeModel treeModel = new DefaultTreeModel(root);
+    public static Engine parent_engine;
 
     public LoadedStructuresPanel(Engine engine) {
+        parent_engine = engine;
         // Header
         JLabel header = new JLabel("Import/Export");
         add(header);
@@ -104,5 +106,13 @@ public class LoadedStructuresPanel extends JPanel {
         buttons.add(removeObjectButton);
         buttons.add(saveObjectButton);
         add(buttons);
+    }
+
+    public static void update() {
+        root.removeAllChildren();
+        for (Space obj : parent_engine.objects) {
+            root.add(new DefaultMutableTreeNode(obj));
+        }
+        treeModel.reload();
     }
 }

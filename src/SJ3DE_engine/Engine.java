@@ -19,6 +19,9 @@ public class Engine extends JPanel {
     public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
     double rotate_X = 0;
     double rotate_Y = 0;
+    public float camera_x = 0;
+    public float camera_y = 0;
+    public float camera_z = 0;
     public double radius_from_point_zero = 50;
     public double f = 1000;
 
@@ -46,12 +49,12 @@ public class Engine extends JPanel {
         objects.add(pien_drzewa);
 
 
-        //objects.add(new Cuboid(50, 150, 300, 0, 0, 0));
-        //objects.add(new Cylinder(150, 100, 300));
         Space trawa = new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180)));
         trawa.materialSet(new Material("#3b8205"));
         objects.add(trawa);
 
+        setFocusable(true);
+        requestFocusInWindow();
 
         // Mouse movements interpretation
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -78,6 +81,12 @@ public class Engine extends JPanel {
                 last_cursor_X = e.getX();
             }
         });
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                requestFocusInWindow();
+            }
+        });
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
@@ -86,6 +95,38 @@ public class Engine extends JPanel {
                     f /= 1.1;
                 } else {
                     f *= 1.1;
+                }
+                repaint();
+            }
+        });
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                float step = 10f;
+
+                double radY = Math.toRadians(rotate_Y);
+                float sinY = (float) Math.sin(radY);
+                float cosY = (float) Math.cos(radY);
+
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_S -> {
+                        camera_x += sinY * step;
+                        camera_y += cosY * step;
+                    }
+                    case KeyEvent.VK_W -> {
+                        camera_x -= sinY * step;
+                        camera_y -= cosY * step;
+                    }
+                    case KeyEvent.VK_A -> {
+                        camera_x -= cosY * step;
+                        camera_y += sinY * step;
+                    }
+                    case KeyEvent.VK_D -> {
+                        camera_x += cosY * step;
+                        camera_y -= sinY * step;
+                    }
+                    case KeyEvent.VK_E -> camera_z -= step;
+                    case KeyEvent.VK_Q -> camera_z += step;
                 }
                 repaint();
             }
@@ -102,7 +143,6 @@ public class Engine extends JPanel {
         points.clear();
         for (Space object : objects)
         {
-            //System.out.println(object);
             points.addAll(object.points);
         }
 
@@ -120,9 +160,9 @@ public class Engine extends JPanel {
 
         for (SJ3DE_environment.Point p : points) {
             SJ3DE_environment.Point pp = new SJ3DE_environment.Point(
-                    p.x,
-                    p.z,
-                    -p.y
+                    p.x - camera_x,
+                    p.z - camera_z,
+                    -p.y + camera_y
             );
 
             pp.rotateX(rotate_X);

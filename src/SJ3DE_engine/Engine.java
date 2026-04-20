@@ -4,12 +4,14 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
+
 import SJ3DE_environment.*;
 import SJ3DE_environment.Point;
 import SJ3DE_stereometry.*;
 import SJ3DE_ui.LoadedStructuresPanel;
 import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;
+import SJ3DE_ui.SideMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +19,8 @@ import java.util.List;
 public class Engine extends JPanel {
     public List<SJ3DE_environment.Point> points = new ArrayList<SJ3DE_environment.Point>();
     public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
-    double rotate_X = 0;
-    double rotate_Y = 0;
+    public double rotate_X = 0;
+    public double rotate_Y = 0;
     public float camera_x = 0;
     public float camera_y = 0;
     public float camera_z = 0;
@@ -27,6 +29,7 @@ public class Engine extends JPanel {
 
     public Engine() {
         this.objects = objects;
+
         // Initialize simple space
         Sphere sfera1 = new Sphere(100, 100, 200, 100);
         sfera1.materialSet(new Material("#5a8205"));
@@ -209,6 +212,7 @@ public class Engine extends JPanel {
                 }
             }
         }
+        SideMenu.update();
     }
     public static void main(String[] args) {
         List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
@@ -219,6 +223,7 @@ public class Engine extends JPanel {
         // Main Swing objects setup
         JFrame frame = new JFrame("SJ3DE - Rendering result");
         JPanel settings = new SettingsPanel(render_tab.getRender());
+        JPanel sidemenu = new SideMenu(render_tab.getRender());
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
@@ -227,8 +232,9 @@ public class Engine extends JPanel {
         tabs.addTab("Structures", new LoadedStructuresPanel(render_tab.getRender()));
 
         frame.add(tabs, BorderLayout.CENTER);
+        frame.add(sidemenu, BorderLayout.WEST);
 
-        frame.setSize(1200,800);
+        frame.setSize(1600,900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }

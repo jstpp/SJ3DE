@@ -45,8 +45,8 @@ public class SideMenu extends JPanel {
         details.add(new JLabel("Render radius: " + Environment.render_radius));
         details.add(new JLabel("Render gap: " + Environment.gap));
         details.add(new JLabel(""));
-        details.add(new JLabel("Rotation (x): " + render.rotate_X + "°"));
-        details.add(new JLabel("Rotation (y): " + render.rotate_Y + "°"));
+        details.add(new JLabel("Rotation (z): " + render.camera.rotate_Z + "°"));
+        details.add(new JLabel("Rotation (xy): " + render.camera.rotate_XY + "°"));
         details.updateUI();
     }
 }

@@ -28,26 +28,28 @@ public class Point extends Environment implements Serializable {
         this.material = material;
     }
 
-    // rotation along the X axis
-    public void rotateX(double angle) {
+    public void rotateZ(double angle) {
         double rad = Math.toRadians(angle);
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
+
         double yNew = y * cos - z * sin;
         double zNew = y * sin + z * cos;
-        y = (float)yNew;
-        z = (float)zNew;
+
+        this.y = (float) yNew;
+        this.z = (float) zNew;
     }
 
-    // rotation along the Y axis
-    public void rotateY(double angle) {
+    public void rotateXY(double angle) {
         double rad = Math.toRadians(angle);
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
-        double xNew = x * cos + z * sin;
-        double zNew = -x * sin + z * cos;
-        x = (float)xNew;
-        z = (float)zNew;
+
+        double xNew = x * cos + y * sin;
+        double zNew = -x * sin + y * cos;
+
+        this.x = (float) xNew;
+        this.y = (float) zNew;
     }
 
     // rainbow displaying

@@ -19,43 +19,40 @@ import java.util.List;
 public class Engine extends JPanel {
     public List<SJ3DE_environment.Point> points = new ArrayList<SJ3DE_environment.Point>();
     public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
-    public double rotate_X = 0;
-    public double rotate_Y = 0;
-    public float camera_x = 0;
-    public float camera_y = 0;
-    public float camera_z = 0;
+    public Camera camera = new Camera(0,0,0,0,0);
     public double radius_from_point_zero = 50;
     public double f = 1000;
 
     public Engine() {
-        this.objects = objects;
 
         // Initialize simple space
         Sphere sfera1 = new Sphere(100, 100, 200, 100);
         sfera1.materialSet(new Material("#5a8205"));
-        objects.add(sfera1);
+        addObject(sfera1);
 
         Sphere sfera2 = new Sphere(130, 80, 175, 100);
         sfera2.materialSet(new Material("#5a8205"));
-        objects.add(sfera2);
+        addObject(sfera2);
 
         Sphere sfera3 = new Sphere(190, 60, 240, 100);
         sfera3.materialSet(new Material("#5a8205"));
-        objects.add(sfera3);
+        addObject(sfera3);
 
         Sphere sfera4 = new Sphere(150, 140, 120, 100);
         sfera4.materialSet(new Material("#5a8205"));
-        objects.add(sfera4);
+        addObject(sfera4);
 
         Cylinder pien_drzewa = new Cylinder(30, 30, 400, 100, 80, 0);
         pien_drzewa.materialSet(new Material("#441e16"));
-        objects.add(pien_drzewa);
+        addObject(pien_drzewa);
 
 
         Space trawa = new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180)));
         trawa.materialSet(new Material("#3b8205"));
-        objects.add(trawa);
+        addObject(trawa);
 
+
+        // Enable rotation
         setFocusable(true);
         requestFocusInWindow();
 
@@ -70,8 +67,8 @@ public class Engine extends JPanel {
                 {
                     int dx = e.getX() - last_cursor_X;
                     int dy = e.getY() - last_cursor_Y;
-                    rotate_Y += dx * 0.5;
-                    rotate_X += dy * 0.5;
+                    camera.rotate_XY += dx * 0.5;
+                    camera.rotate_Z += dy * 0.5;
                     repaint();
                 }
                 last_cursor_X = e.getX();
@@ -107,35 +104,43 @@ public class Engine extends JPanel {
             public void keyPressed(KeyEvent e) {
                 float step = 10f;
 
-                double radY = Math.toRadians(rotate_Y);
+                double radY = Math.toRadians(camera.rotate_XY);
                 float sinY = (float) Math.sin(radY);
                 float cosY = (float) Math.cos(radY);
 
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_S -> {
-                        camera_x += sinY * step;
-                        camera_y += cosY * step;
+                    case KeyEvent.VK_D -> {
+                        camera.camera_x += cosY * step;
+                        camera.camera_y += sinY * step;
                     }
                     case KeyEvent.VK_W -> {
-                        camera_x -= sinY * step;
-                        camera_y -= cosY * step;
+                        camera.camera_x += sinY * step;
+                        camera.camera_y -= cosY * step;
+                    }
+                    case KeyEvent.VK_S -> {
+                        camera.camera_x -= sinY * step;
+                        camera.camera_y += cosY * step;
                     }
                     case KeyEvent.VK_A -> {
-                        camera_x -= cosY * step;
-                        camera_y += sinY * step;
+                        camera.camera_x -= cosY * step;
+                        camera.camera_y -= sinY * step;
                     }
-                    case KeyEvent.VK_D -> {
-                        camera_x += cosY * step;
-                        camera_y -= sinY * step;
-                    }
-                    case KeyEvent.VK_E -> camera_z -= step;
-                    case KeyEvent.VK_Q -> camera_z += step;
+                    case KeyEvent.VK_SHIFT -> camera.camera_z -= step;
+                    case KeyEvent.VK_SPACE -> camera.camera_z += step;
                 }
                 repaint();
             }
         });
     }
 
+    public void addObject(Space obj)
+    {
+        for (Point pt : obj.points)
+        {
+            pt.parent_engine = this;
+        }
+        objects.add(obj);
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -163,19 +168,21 @@ public class Engine extends JPanel {
 
         for (SJ3DE_environment.Point p : points) {
             SJ3DE_environment.Point pp = new SJ3DE_environment.Point(
-                    p.x - camera_x,
-                    p.z - camera_z,
-                    -p.y + camera_y
+                    p.x - camera.camera_x,
+                    p.y - camera.camera_y,
+                    p.z - camera.camera_z
             );
 
-            pp.rotateX(rotate_X);
-            pp.rotateY(rotate_Y);
+            pp.parent_engine = this;
+
+            pp.rotateXY(camera.rotate_XY);
+            pp.rotateZ(-camera.rotate_Z);
 
             double depth = pp.z;
 
-            if (depth <= -f + 1) continue;
+            if (depth <= 0) continue;
 
-            double scale = f / (depth + f);
+            double scale = f / depth;
 
             int x2d = (int) (pp.x * scale + width / 2);
             int y2d = (int) (-pp.y * scale + height / 2);
@@ -214,8 +221,13 @@ public class Engine extends JPanel {
         }
         SideMenu.update();
     }
+
+    @Override
+    public String toString() {
+        return "Engine(Camera: " + new Point(camera.camera_x, camera.camera_y, camera.camera_z) + ")";
+    }
+
     public static void main(String[] args) {
-        List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
 
         // Render tab setup
         RenderTab render_tab = new RenderTab();
@@ -237,5 +249,6 @@ public class Engine extends JPanel {
         frame.setSize(1600,900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
     }
 }

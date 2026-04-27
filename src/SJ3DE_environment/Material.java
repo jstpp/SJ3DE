@@ -1,23 +1,32 @@
 package SJ3DE_environment;
 
+import java.awt.*;
 import java.io.Serializable;
 
 public class Material <T> implements Serializable {
     private static final long serialVersionUID = 1L;
-    public T color;
-    public float thickness = 5;
+    public Color color;
+    public int thickness = 3;
 
-    public Material(T color, float thickness) {
-        this.color = color;
+    public Material(T color, int thickness) {
+        if(color instanceof Color) {
+            this.color = (Color)color;
+        } else if (color instanceof String) {
+            this.color = Color.decode((String)color);
+        }
         this.thickness = thickness;
     }
     public Material(T color) {
-        this.color = color;
+        if(color instanceof Color) {
+            this.color = (Color)color;
+        } else if (color instanceof String) {
+            this.color = Color.decode((String)color);
+        }
     }
-    public Material(float thickness) {
+    public Material(int thickness) {
         this.thickness = thickness;
     }
     public Material() {
-        this.color = (T)"#ffffff";
+        this.color = Color.decode("#ffffff");
     }
 }

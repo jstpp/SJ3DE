@@ -13,6 +13,8 @@ import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;
 import SJ3DE_ui.SideMenu;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,36 +25,14 @@ public class Engine extends JPanel {
     public double radius_from_point_zero = 50;
     public double f = 1000;
 
+    public BufferedImage canvas;
+    public int[] pixels;
+    private int cWidth, cHeight;
+
     public Engine() {
 
-        // Initialize simple space
-        Sphere sfera1 = new Sphere(100, 100, 200, 100);
-        sfera1.materialSet(new Material("#5a8205"));
-        addObject(sfera1);
-
-        Sphere sfera2 = new Sphere(130, 80, 175, 100);
-        sfera2.materialSet(new Material("#5a8205"));
-        addObject(sfera2);
-
-        Sphere sfera3 = new Sphere(190, 60, 240, 100);
-        sfera3.materialSet(new Material("#5a8205"));
-        addObject(sfera3);
-
-        Sphere sfera4 = new Sphere(150, 140, 120, 100);
-        sfera4.materialSet(new Material("#5a8205"));
-        addObject(sfera4);
-
-        Cylinder pien_drzewa = new Cylinder(30, 30, 400, 100, 80, 0);
-        pien_drzewa.materialSet(new Material("#441e16"));
-        addObject(pien_drzewa);
-
-
-        Space trawa = new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180)));
-        trawa.materialSet(new Material("#3b8205"));
-        addObject(trawa);
-
-
-        // Enable rotation
+        // Initial setup
+        loadExample();
         setFocusable(true);
         requestFocusInWindow();
 
@@ -131,6 +111,7 @@ public class Engine extends JPanel {
                 repaint();
             }
         });
+
     }
 
     public void addObject(Space obj)
@@ -141,6 +122,7 @@ public class Engine extends JPanel {
         }
         objects.add(obj);
     }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -159,12 +141,13 @@ public class Engine extends JPanel {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, width, height);
 
-        double[][] zBuffer = new double[width][height];
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                zBuffer[i][j] = Double.POSITIVE_INFINITY;
-            }
+        if (canvas == null || getWidth() != cWidth || getHeight() != cHeight) {
+            initCanvas();
         }
+        double[] zBuffer = new double[width*height];
+        java.util.Arrays.fill(zBuffer, Double.POSITIVE_INFINITY);
+        java.util.Arrays.fill(pixels, 0x000000);
+
 
         for (SJ3DE_environment.Point p : points) {
             SJ3DE_environment.Point pp = new SJ3DE_environment.Point(
@@ -178,19 +161,16 @@ public class Engine extends JPanel {
             pp.rotateXY(camera.rotate_XY);
             pp.rotateZ(-camera.rotate_Z);
 
+            // Scale and depth
             double depth = pp.z;
-
             if (depth <= 0) continue;
-
             double scale = f / depth;
-
             int x2d = (int) (pp.x * scale + width / 2);
             int y2d = (int) (-pp.y * scale + height / 2);
-
             if (x2d < 0 || x2d >= width || y2d < 0 || y2d >= height) continue;
 
-            if (depth < zBuffer[x2d][y2d]) {
-                zBuffer[x2d][y2d] = depth;
+            if (depth < zBuffer[y2d*width+x2d]) {
+                zBuffer[y2d*width+x2d] = depth;
 
                 int size = (int) p.material.thickness;
 
@@ -205,21 +185,51 @@ public class Engine extends JPanel {
                         if (px < 0 || px >= width || py < 0 || py >= height) continue;
 
 
-                        if (depth < zBuffer[px][py]) {
-                            zBuffer[px][py] = depth;
-
-                            if(p.material.color instanceof String) {
-                                g2.setColor(Color.decode((String)p.material.color));
-                            } else if (p.material.color instanceof Color) {
-                                g2.setColor((Color)p.material.color);
-                            }
-                            g2.fillRect(px, py, 1, 1);
+                        if (depth < zBuffer[py * width + px]) {
+                            zBuffer[py * width + px] = depth;
+                            pixels[py * width + px] = p.material.color.getRGB();
                         }
                     }
                 }
             }
         }
+        g.drawImage(canvas, 0,0,null);
         SideMenu.update();
+    }
+
+    public void initCanvas() {
+        this.cWidth = getWidth();
+        this.cHeight = getHeight();
+        this.canvas = new BufferedImage(this.cWidth, this.cHeight, BufferedImage.TYPE_INT_RGB);
+        this.pixels = ((DataBufferInt) this.canvas.getRaster().getDataBuffer()).getData();
+    }
+
+    public void loadExample()
+    {
+        // Initialize simple space
+        Sphere sfera1 = new Sphere(100, 100, 200, 100);
+        sfera1.materialSet(new Material("#5a8205"));
+        addObject(sfera1);
+
+        Sphere sfera2 = new Sphere(130, 80, 175, 100);
+        sfera2.materialSet(new Material("#5a8205"));
+        addObject(sfera2);
+
+        Sphere sfera3 = new Sphere(190, 60, 240, 100);
+        sfera3.materialSet(new Material("#5a8205"));
+        addObject(sfera3);
+
+        Sphere sfera4 = new Sphere(150, 140, 120, 100);
+        sfera4.materialSet(new Material("#5a8205"));
+        addObject(sfera4);
+
+        Cylinder pien_drzewa = new Cylinder(30, 30, 400, 100, 80, 0);
+        pien_drzewa.materialSet(new Material("#441e16"));
+        addObject(pien_drzewa);
+
+        Space trawa = new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180)));
+        trawa.materialSet(new Material("#3b8205"));
+        addObject(trawa);
     }
 
     @Override

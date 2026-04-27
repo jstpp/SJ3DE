@@ -33,8 +33,8 @@ public class Sphere extends Space {
     public Sphere(float r) {
         super(0,0,0);
         this.radius = r;
-        int thetaSteps = 30;
-        int phiSteps = 30;
+        int thetaSteps = 80;
+        int phiSteps = 80;
 
         for (int i = 0; i <= thetaSteps; i++) {
             double theta = Math.PI * i / thetaSteps;

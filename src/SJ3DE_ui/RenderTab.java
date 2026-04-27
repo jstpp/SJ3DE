@@ -1,6 +1,7 @@
 package SJ3DE_ui;
 
 import SJ3DE_engine.Engine;
+import SJ3DE_environment.Environment;
 import SJ3DE_environment.Point;
 import SJ3DE_environment.RenderExpression;
 import SJ3DE_environment.Space;

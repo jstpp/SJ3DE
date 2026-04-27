@@ -7,7 +7,9 @@ import java.util.List;
 public class Space extends Environment implements Serializable {
     private static final long serialVersionUID = 1L;
     protected Point root_point;
-    private RenderExpression expr;
+    protected RenderExpression expr;
+    protected boolean isStatic = false;
+    protected int age = 0;
 
     public List<Point> points = new ArrayList<Point>();
 
@@ -40,12 +42,25 @@ public class Space extends Environment implements Serializable {
             return false;
         }
     }
+    public boolean generate(Material material) {
+        try {
+            points = expr.represent();
+            materialSet(material);
+            return true;
+        } catch (Throwable whatever) {
+            return false;
+        }
+    }
 
     public boolean materialSet(Material material) {
         for (Point p : points) {
             p.material = material;
         }
         return true;
+    }
+
+    public void updateObject() {
+        age++;
     }
 
     public String toString() {

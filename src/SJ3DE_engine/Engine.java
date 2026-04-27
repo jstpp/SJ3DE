@@ -1,27 +1,29 @@
 package SJ3DE_engine;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 
 import SJ3DE_environment.*;
 import SJ3DE_environment.Point;
-import SJ3DE_stereometry.*;
+import SJ3DE_nature.hydro.Sea1;
 import SJ3DE_ui.LoadedStructuresPanel;
 import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;
 import SJ3DE_ui.SideMenu;
+import SJ3DE_nature.soil.Desert1;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Timer;
+
 public class Engine extends JPanel {
     public List<SJ3DE_environment.Point> points = new ArrayList<SJ3DE_environment.Point>();
     public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
-    public Camera camera = new Camera(0,0,0,0,0);
+    public Camera camera = new Camera(0,0,100,0,90);
     public double radius_from_point_zero = 50;
     public double f = 1000;
 
@@ -29,8 +31,11 @@ public class Engine extends JPanel {
     public int[] pixels;
     private int cWidth, cHeight;
 
-    public Engine() {
+    private Timer time = new Timer();
 
+    public Engine() {
+        Environment.parent_engine = this;
+        time.schedule(new TimeUpdate(), 300, 500);
         // Initial setup
         loadExample();
         setFocusable(true);
@@ -105,8 +110,8 @@ public class Engine extends JPanel {
                         camera.camera_x -= cosY * step;
                         camera.camera_y -= sinY * step;
                     }
-                    case KeyEvent.VK_SHIFT -> camera.camera_z -= step;
-                    case KeyEvent.VK_SPACE -> camera.camera_z += step;
+                    case KeyEvent.VK_E -> camera.camera_z -= step;
+                    case KeyEvent.VK_Q -> camera.camera_z += step;
                 }
                 repaint();
             }
@@ -121,6 +126,12 @@ public class Engine extends JPanel {
             pt.parent_engine = this;
         }
         objects.add(obj);
+    }
+
+    public void updateObjects() {
+        for (Space obj : objects) {
+            obj.updateObject();
+        }
     }
 
     @Override
@@ -206,30 +217,9 @@ public class Engine extends JPanel {
 
     public void loadExample()
     {
-        // Initialize simple space
-        Sphere sfera1 = new Sphere(100, 100, 200, 100);
-        sfera1.materialSet(new Material("#5a8205"));
-        addObject(sfera1);
-
-        Sphere sfera2 = new Sphere(130, 80, 175, 100);
-        sfera2.materialSet(new Material("#5a8205"));
-        addObject(sfera2);
-
-        Sphere sfera3 = new Sphere(190, 60, 240, 100);
-        sfera3.materialSet(new Material("#5a8205"));
-        addObject(sfera3);
-
-        Sphere sfera4 = new Sphere(150, 140, 120, 100);
-        sfera4.materialSet(new Material("#5a8205"));
-        addObject(sfera4);
-
-        Cylinder pien_drzewa = new Cylinder(30, 30, 400, 100, 80, 0);
-        pien_drzewa.materialSet(new Material("#441e16"));
-        addObject(pien_drzewa);
-
-        Space trawa = new Space(100, 80, -180, new RenderExpression("sin(x/10)*cos(y/10)*10", new Point(100, 80, -180)));
-        trawa.materialSet(new Material("#3b8205"));
-        addObject(trawa);
+        // Initialize simple coast
+        addObject(new Desert1(0,0,0));
+        addObject(new Sea1(1000,0,0));
     }
 
     @Override

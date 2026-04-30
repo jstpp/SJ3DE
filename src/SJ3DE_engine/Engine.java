@@ -158,9 +158,8 @@ public class Engine extends JPanel {
         java.util.Arrays.fill(zBuffer, Double.POSITIVE_INFINITY);
         java.util.Arrays.fill(pixels, 0x000000);
 
-
-        for (SJ3DE_environment.Point p : points) {
-            SJ3DE_environment.Point pp = new SJ3DE_environment.Point(
+        for (Point p : points) {
+            Point pp = new Point(
                     p.x - camera.camera_x,
                     p.y - camera.camera_y,
                     p.z - camera.camera_z
@@ -217,6 +216,7 @@ public class Engine extends JPanel {
     public void loadExample()
     {
         // Initialize simple coast
+        addObject(new Line(new Point(0,0,0), new Point(0,0,1000)));
         addObject(new Desert1(0,0,0));
         addObject(new Sea1(1000,0,0));
     }

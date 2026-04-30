@@ -21,7 +21,6 @@ public class Space extends Environment implements Serializable {
     }
     public Space(float root_x, float root_y, float root_z) {
         this.root_point = new Point(root_x, root_y, root_z);
-        generate();
     }
     public Space(RenderExpression expr) {
         this.root_point = new Point(0,0,0);

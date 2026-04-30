@@ -11,7 +11,7 @@ public class Point extends Environment implements Serializable {
     public float y;
     public float z;
     public Material material = new Material();
-    public Engine parent_engine;
+    public transient Engine parent_engine;
 
     public Point(float x, float y, float z)
     {
@@ -54,7 +54,7 @@ public class Point extends Environment implements Serializable {
 
     // rainbow displaying
     public void rainbow() {
-        float hue = (float)((z + y + x + parent_engine.radius_from_point_zero) / (2*parent_engine.radius_from_point_zero));
+        float hue = (float)((z + y + x + 50) / 100);
         this.material = new Material(Color.getHSBColor(hue, 1f, 1f));
     }
 

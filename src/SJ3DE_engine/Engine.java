@@ -24,7 +24,6 @@ public class Engine extends JPanel {
     public List<SJ3DE_environment.Point> points = new ArrayList<SJ3DE_environment.Point>();
     public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
     public Camera camera = new Camera(0,0,100,0,90);
-    public double radius_from_point_zero = 50;
     public double f = 1000;
 
     public BufferedImage canvas;

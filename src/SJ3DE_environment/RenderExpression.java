@@ -10,7 +10,7 @@ public class RenderExpression extends Environment implements Serializable {
     private static final long serialVersionUID = 1L;
     private String expression;
     public transient Expression e;
-    private Point root_point = new Point(0,0,0);
+    public Point root_point = new Point(0,0,0);
     private List<RenderExpression> subexpressions = new ArrayList<RenderExpression>();
     private String expression_type = "+";
 

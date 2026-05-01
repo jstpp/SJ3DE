@@ -6,10 +6,11 @@ import java.util.List;
 
 public class Space extends Environment implements Serializable {
     private static final long serialVersionUID = 1L;
-    protected Point root_point;
+    public Point root_point;
     protected RenderExpression expr;
+
     protected boolean isStatic = false;
-    protected int age = 0;
+    public int age = 0;
 
     public List<Point> points = new ArrayList<Point>();
 
@@ -23,7 +24,7 @@ public class Space extends Environment implements Serializable {
         this.root_point = new Point(root_x, root_y, root_z);
     }
     public Space(RenderExpression expr) {
-        this.root_point = new Point(0,0,0);
+        this.root_point = expr.root_point;
         this.expr = expr;
         generate();
     }

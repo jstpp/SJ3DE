@@ -1,6 +1,7 @@
 package SJ3DE_nature.hydro;
 
 import SJ3DE_environment.Material;
+import SJ3DE_environment.Point;
 import SJ3DE_environment.RenderExpression;
 import SJ3DE_environment.Space;
 
@@ -14,7 +15,7 @@ public class Sea1 extends Space {
     @Override
     public void updateObject() {
         age++;
-        expr = new RenderExpression("sin(x/250 + " + age + ") * 5 + cos(y/350 + " + age + "*0.8) * 5");
+        expr = new RenderExpression("sin(x/250 + " + age/10 + ") * 5 + cos(y/350 + " + age/10 + "*0.8) * 5", root_point);
         generate(new Material("#2e616e"));
     }
 }

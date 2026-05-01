@@ -6,7 +6,9 @@ import java.awt.event.*;
 
 import SJ3DE_environment.*;
 import SJ3DE_environment.Point;
+import SJ3DE_nature.flora.Tree1.Tree1;
 import SJ3DE_nature.hydro.Sea1;
+import SJ3DE_nature.soil.Lawn1;
 import SJ3DE_ui.LoadedStructuresPanel;
 import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;
@@ -30,11 +32,11 @@ public class Engine extends JPanel {
     public int[] pixels;
     private int cWidth, cHeight;
 
-    private Timer time = new Timer();
+    public Timer time = new Timer();
 
     public Engine() {
         Environment.parent_engine = this;
-        time.schedule(new TimeUpdate(), 300, 500);
+        time.schedule(new TimeUpdate(), 300, 100);
         // Initial setup
         loadExample();
         setFocusable(true);
@@ -159,6 +161,10 @@ public class Engine extends JPanel {
         java.util.Arrays.fill(pixels, 0x000000);
 
         for (Point p : points) {
+            if(Math.sqrt((p.x-camera.camera_x)*(p.x-camera.camera_x)+(p.y-camera.camera_y)*(p.y-camera.camera_y)+(p.z-camera.camera_z)*(p.z-camera.camera_z))>Environment.render_radius)
+            {
+                continue;
+            }
             Point pp = new Point(
                     p.x - camera.camera_x,
                     p.y - camera.camera_y,
@@ -216,9 +222,11 @@ public class Engine extends JPanel {
     public void loadExample()
     {
         // Initialize simple coast
-        addObject(new Line(new Point(0,0,0), new Point(0,0,1000)));
+        //addObject(new Line(new Point(0,0,0), new Point(0,0,1000)));
+        addObject(new Lawn1(0,0,100));
+        addObject(new Tree1(0,0,100));
         addObject(new Desert1(0,0,0));
-        addObject(new Sea1(1000,0,0));
+        addObject(new Sea1(-800,0,0));
     }
 
     @Override

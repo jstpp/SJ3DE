@@ -35,7 +35,7 @@ public class Tree1 extends Space {
                 float randomFloat = random.nextFloat();
                 br.length_x += random.nextFloat()*2-1;
                 br.length_y += random.nextFloat()*2-1;
-                br.length_z += random.nextFloat()*2-0.75;
+                br.length_z += random.nextFloat() * 2 - 0.85;
                 br.age++;
 
                 if(randomFloat < br.a) {

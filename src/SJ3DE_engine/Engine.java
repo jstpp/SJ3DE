@@ -18,6 +18,7 @@ import SJ3DE_nature.soil.Desert1;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import java.util.Timer;
@@ -122,17 +123,18 @@ public class Engine extends JPanel {
 
     public void addObject(Space obj)
     {
-        for (Point pt : obj.points)
-        {
+        for (Point pt : obj.points) {
             pt.parent_engine = this;
         }
         objects.add(obj);
     }
 
     public void updateObjects() {
-        for (Space obj : objects) {
-            obj.updateObject();
-        }
+        try {
+            for (Space obj : objects) {
+                obj.updateObject();
+            }
+        } catch (ConcurrentModificationException cme) {}
     }
 
     @Override
@@ -225,6 +227,7 @@ public class Engine extends JPanel {
         //addObject(new Line(new Point(0,0,0), new Point(0,0,1000)));
         addObject(new Lawn1(0,0,100));
         addObject(new Tree1(0,0,100));
+        addObject(new Tree1(50,50,80));
         addObject(new Desert1(0,0,0));
         addObject(new Sea1(-800,0,0));
     }

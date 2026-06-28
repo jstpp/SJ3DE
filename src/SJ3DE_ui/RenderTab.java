@@ -24,7 +24,7 @@ public class RenderTab extends JPanel {
         process_expression.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Space shape = new Space(0,0,0, new RenderExpression(expression_pane.getText(), new Point(0,0,0)));
+                Space shape = new Space(render.camera.camera_x,render.camera.camera_y,render.camera.camera_z, new RenderExpression(expression_pane.getText(), new Point(render.camera.camera_x,render.camera.camera_y,render.camera.camera_z)));
                 for (Point po : shape.points) {
                     po.parent_engine = render;
                     po.rainbow();

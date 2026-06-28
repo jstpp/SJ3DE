@@ -134,7 +134,9 @@ public class Engine extends JPanel {
             for (Space obj : objects) {
                 obj.updateObject();
             }
-        } catch (ConcurrentModificationException cme) {}
+        } catch (ConcurrentModificationException cme) {
+            System.out.println("Concurrent modification. Ignored.");
+        }
     }
 
     @Override
@@ -243,7 +245,7 @@ public class Engine extends JPanel {
         RenderTab render_tab = new RenderTab();
 
         // Main Swing objects setup
-        JFrame frame = new JFrame("SJ3DE - Rendering result");
+        JFrame frame = new JFrame("SJ3DE");
         JPanel settings = new SettingsPanel(render_tab.getRender());
         JPanel sidemenu = new SideMenu(render_tab.getRender());
 
@@ -258,6 +260,7 @@ public class Engine extends JPanel {
 
         frame.setSize(1600,900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
     }

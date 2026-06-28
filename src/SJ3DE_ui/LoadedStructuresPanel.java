@@ -4,9 +4,13 @@ import SJ3DE_engine.Engine;
 import SJ3DE_environment.Space;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -18,16 +22,21 @@ public class LoadedStructuresPanel extends JPanel {
 
     public LoadedStructuresPanel(Engine engine) {
         parent_engine = engine;
+        // Layout
+        setLayout(new BorderLayout());
+        setBorder(new EmptyBorder(20, 40, 20, 40));
+
         // Header
         JLabel header = new JLabel("Import/Export");
-        add(header);
+        add(header, BorderLayout.NORTH);
 
         // Structures tree
         for (Space obj : engine.objects) {
             root.add(new DefaultMutableTreeNode(obj));
         }
         JTree structures_tree = new JTree(treeModel);
-        add(structures_tree);
+        structures_tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+        add(structures_tree, BorderLayout.CENTER);
         repaint();
 
         // Modify objects
@@ -67,16 +76,21 @@ public class LoadedStructuresPanel extends JPanel {
         });
         removeObjectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DefaultMutableTreeNode selectedNode =
-                        (DefaultMutableTreeNode) structures_tree.getLastSelectedPathComponent();
+                TreePath[] selectedPaths = structures_tree.getSelectionPaths();
 
-                if (selectedNode != null && selectedNode.getParent() != null) {
-                    Object userObject = selectedNode.getUserObject();
-                    if (userObject instanceof Space) {
-                        engine.objects.remove(userObject);
+                if(selectedPaths!=null) {
+                    for(TreePath path : selectedPaths) {
+                        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+                        if (selectedNode != null && selectedNode.getParent() != null) {
+                            Object userObject = selectedNode.getUserObject();
+                            if (userObject instanceof Space) {
+                                engine.objects.remove(userObject);
+                            }
+
+                            treeModel.removeNodeFromParent(selectedNode);
+                        }
                     }
-
-                    treeModel.removeNodeFromParent(selectedNode);
                 }
             }
         });
@@ -105,7 +119,7 @@ public class LoadedStructuresPanel extends JPanel {
         buttons.add(addObjectButton);
         buttons.add(removeObjectButton);
         buttons.add(saveObjectButton);
-        add(buttons);
+        add(buttons, BorderLayout.SOUTH);
     }
 
     public static void update() {

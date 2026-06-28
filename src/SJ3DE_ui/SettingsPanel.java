@@ -4,6 +4,7 @@ import SJ3DE_engine.Engine;
 import SJ3DE_environment.Environment;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.util.Hashtable;
@@ -12,6 +13,7 @@ public class SettingsPanel extends JPanel {
     public SettingsPanel(Engine engine) {
         // Layout
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setBorder(new EmptyBorder(20, 40, 20, 40));
 
         // Header
         add(new JLabel("Settings"));

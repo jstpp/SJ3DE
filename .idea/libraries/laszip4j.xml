@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="laszip4j">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/laszip4j-0.22-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -8,6 +8,9 @@ My first attempt using Java for 3D data visualization. **Goal is to build 3D vis
 </p>
 
 ### Screenshots
+Moszna Palace (46,5 MB .laz file)
 ![Screenshot 1](screenshots/S1.png)
+
+Mathematical expression
 ![Screenshot 2](screenshots/S2.png)
 

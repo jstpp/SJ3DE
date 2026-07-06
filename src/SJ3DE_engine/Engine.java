@@ -6,6 +6,7 @@ import java.awt.event.*;
 
 import SJ3DE_environment.*;
 import SJ3DE_environment.Point;
+import SJ3DE_lidar.PCloud;
 import SJ3DE_nature.flora.Tree1.Tree1;
 import SJ3DE_nature.hydro.Sea1;
 import SJ3DE_nature.soil.Lawn1;
@@ -227,6 +228,7 @@ public class Engine extends JPanel {
     {
         // Initialize simple coast
         //addObject(new Line(new Point(0,0,0), new Point(0,0,1000)));
+        //addObject(new PCloud("Palac_Moszna.laz", 0.0002));
         addObject(new Lawn1(0,0,100));
         addObject(new Tree1(0,0,100));
         addObject(new Tree1(50,50,80));

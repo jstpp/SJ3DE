@@ -10,12 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PCloud extends Space {
+    private String filepath;
     public PCloud() {
         super();
     }
 
-    public boolean readLAZFile(String filename) {
-        LASReader reader = new LASReader(new File(filename));
+    public PCloud(String file) {
+        super();
+        readLAZFile(file);
+    }
+
+    public PCloud(Point root_point, String file) {
+        super();
+        this.root_point = root_point;
+        readLAZFile(file);
+    }
+
+    public boolean readLAZFile(String file) {
+        this.filepath = file;
+        LASReader reader = new LASReader(new File(this.filepath));
         List<List<Integer>> tempCoordinatesList = new ArrayList<>();
         int[] min = {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
         int[] max = {Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
@@ -36,8 +49,16 @@ public class PCloud extends Space {
         }
 
         for (List<Integer> pt : tempCoordinatesList) {
-            points.add(new Point(pt.get(0)-min[0],pt.get(1)-min[1],pt.get(2)-min[2]));
+            points.add(new Point(Math.round(pt.get(0) - min[0] + root_point.x),
+                    Math.round(pt.get(1) - min[1] + root_point.y),
+                    Math.round(pt.get(2) - min[2] + root_point.z)));
         }
+
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "PCloud(root_point: " + root_point + "; Points: " + points.size() + "; Path: '" + filepath + "')";
     }
 }

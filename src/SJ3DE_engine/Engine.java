@@ -13,7 +13,6 @@ import SJ3DE_nature.soil.Lawn1;
 import SJ3DE_ui.LoadedStructuresPanel;
 import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;
-import SJ3DE_ui.SideMenu;
 import SJ3DE_nature.soil.Desert1;
 
 import java.awt.image.BufferedImage;
@@ -38,7 +37,7 @@ public class Engine extends JPanel {
 
     public Engine() {
         Environment.parent_engine = this;
-        time.schedule(new TimeUpdate(), 300, 100);
+        time.schedule(new TimeUpdate(), 300, Environment.time_tick_duration);
         // Initial setup
         loadExample();
         setFocusable(true);
@@ -115,6 +114,8 @@ public class Engine extends JPanel {
                     }
                     case KeyEvent.VK_E -> camera.camera_z -= step;
                     case KeyEvent.VK_Q -> camera.camera_z += step;
+
+                    case KeyEvent.VK_F1 -> camera.debug_available = (camera.debug_available+1)%2;
                 }
                 repaint();
             }
@@ -214,7 +215,18 @@ public class Engine extends JPanel {
             }
         }
         g.drawImage(canvas, 0,0,null);
-        SideMenu.update();
+
+        if(camera.debug_available==1) {
+            g.setFont(new Font("Arial", Font.PLAIN, 12));
+            g.setColor(Color.WHITE);
+            g.drawString("Structures: " + objects.size(), 10, 20);
+            g.drawString("Points: " + points.size(), 10, 35);
+            g.drawString("Render radius: " + Environment.render_radius, 10, 50);
+            g.drawString("Render gap: " + Environment.gap, 10, 65);
+            g.drawString("Time (s): " + Environment.time_ticks * Environment.time_tick_duration / 1000, 10, 95);
+            g.drawString("Coordinates: x: " + Math.round(camera.camera_x) + " y: " + Math.round(camera.camera_y) + " z: " + Math.round(camera.camera_z), 10, 125);
+            g.drawString("Rotation: " + Math.abs(camera.rotate_Z % 360) + "°, " + Math.abs(camera.rotate_XY % 360) + "°", 10, 140);
+        }
     }
 
     public void initCanvas() {
@@ -249,7 +261,6 @@ public class Engine extends JPanel {
         // Main Swing objects setup
         JFrame frame = new JFrame("SJ3DE");
         JPanel settings = new SettingsPanel(render_tab.getRender());
-        JPanel sidemenu = new SideMenu(render_tab.getRender());
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
@@ -258,7 +269,6 @@ public class Engine extends JPanel {
         tabs.addTab("Structures", new LoadedStructuresPanel(render_tab.getRender()));
 
         frame.add(tabs, BorderLayout.CENTER);
-        frame.add(sidemenu, BorderLayout.WEST);
 
         frame.setSize(1600,900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

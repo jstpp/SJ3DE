@@ -8,6 +8,7 @@ public class Camera extends Point {
     public float camera_x = 0;
     public float camera_y = 0;
     public float camera_z = 0;
+    public int debug_available = 1;
 
     public Camera(float camera_x, float camera_y, float camera_z, double rotate_XY, double rotate_Z)
     {

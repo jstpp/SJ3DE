@@ -9,5 +9,6 @@ public class TimeUpdate extends TimerTask {
     public void run() {
         Environment.parent_engine.updateObjects();
         Environment.parent_engine.repaint();
+        Environment.time_ticks++;
     }
 }

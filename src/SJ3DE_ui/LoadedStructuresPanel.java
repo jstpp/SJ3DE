@@ -2,6 +2,7 @@ package SJ3DE_ui;
 
 import SJ3DE_engine.Engine;
 import SJ3DE_environment.Space;
+import SJ3DE_lidar.PCloud;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -41,9 +42,28 @@ public class LoadedStructuresPanel extends JPanel {
 
         // Modify objects
         JPanel buttons = new JPanel();
-        JButton addObjectButton = new JButton("Add new object to selected node");
+        JButton addLAZObjectButton = new JButton("Add new LiDAR points cloud");
+        JButton addObjectButton = new JButton("Add new objects");
         JButton removeObjectButton = new JButton("Remove selected node");
-        JButton saveObjectButton = new JButton("Save selected node");
+        JButton saveObjectButton = new JButton("Save all");
+
+        addLAZObjectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                JFileChooser j = new JFileChooser(new File(System.getProperty("user.home")), FileSystemView.getFileSystemView());
+                j.showSaveDialog(null);
+
+                String filename = j.getSelectedFile().getAbsolutePath();
+                try {
+                    Space obj = new PCloud(new SJ3DE_environment.Point(engine.camera.camera_x, engine.camera.camera_y, engine.camera.camera_z), filename, 0.002f);
+                    engine.objects.add(obj);
+                    root.add(new DefaultMutableTreeNode(obj));
+                    treeModel.reload();
+                } catch (Exception ex) {
+                    System.out.println("File not found: " + ex.getLocalizedMessage());
+                }
+            }
+        });
         addObjectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
@@ -54,20 +74,18 @@ public class LoadedStructuresPanel extends JPanel {
                 try {
                     FileInputStream fileOut = new FileInputStream(filename);
                     ObjectInputStream objOut = new ObjectInputStream(fileOut);
-                    engine.objects.clear();
                     while (true) {
                         try {
-                            engine.objects.add((Space) objOut.readObject());
+                            Space obj = (Space) objOut.readObject();
+                            engine.objects.add(obj);
+                            root.add(new DefaultMutableTreeNode(obj));
                         } catch (EOFException err) {
                             break;
                         }
                     }
                     objOut.close();
-                    root.removeAllChildren();
-                    for (Space obj : engine.objects) {
-                        root.add(new DefaultMutableTreeNode(obj));
-                    }
                     treeModel.reload();
+
 
                 } catch (Exception ex) {
                     System.out.println("File not found: " + ex.getLocalizedMessage());
@@ -116,6 +134,7 @@ public class LoadedStructuresPanel extends JPanel {
             }
         });
 
+        buttons.add(addLAZObjectButton);
         buttons.add(addObjectButton);
         buttons.add(removeObjectButton);
         buttons.add(saveObjectButton);

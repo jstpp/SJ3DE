@@ -42,30 +42,28 @@ public class Engine extends JPanel {
         loadExample();
         setFocusable(true);
         requestFocusInWindow();
+        setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 
         // Mouse movements interpretation
         addMouseMotionListener(new MouseMotionAdapter() {
-            int last_cursor_X = -1;
-            int last_cursor_Y = -1;
-
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (last_cursor_X != -1 && last_cursor_Y != -1)
+                if (camera.last_cursor_X != -1 && camera.last_cursor_Y != -1)
                 {
-                    int dx = e.getX() - last_cursor_X;
-                    int dy = e.getY() - last_cursor_Y;
+                    int dx = e.getX() - camera.last_cursor_X;
+                    int dy = e.getY() - camera.last_cursor_Y;
                     camera.rotate_XY += dx * 0.5;
                     camera.rotate_Z += dy * 0.5;
                     repaint();
                 }
-                last_cursor_X = e.getX();
-                last_cursor_Y = e.getY();
+                camera.last_cursor_X = e.getX();
+                camera.last_cursor_Y = e.getY();
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                last_cursor_Y = e.getY();
-                last_cursor_X = e.getX();
+                camera.last_cursor_Y = e.getY();
+                camera.last_cursor_X = e.getX();
             }
         });
         addMouseListener(new MouseAdapter() {
@@ -194,6 +192,17 @@ public class Engine extends JPanel {
                 zBuffer[y2d*width+x2d] = depth;
 
                 int size = (int) p.material.thickness;
+                double distanceSq = (Math.pow(camera.last_cursor_X - x2d, 2) + Math.pow(camera.last_cursor_Y - y2d, 2));
+                int baseColorRGB = p.material.color.getRGB();
+
+                if (distanceSq < camera.default_brush_radius) {
+                    Color c = p.material.color;
+                    baseColorRGB = new Color(
+                            Math.min((int)(c.getRed() * 1.3), 255),
+                            Math.min((int)(c.getGreen() * 1.3), 255),
+                            Math.min((int)(c.getBlue() * 1.3), 255)
+                    ).getRGB();
+                }
 
                 int radius = size / 2;
 
@@ -208,7 +217,7 @@ public class Engine extends JPanel {
 
                         if (depth < zBuffer[py * width + px]) {
                             zBuffer[py * width + px] = depth;
-                            pixels[py * width + px] = p.material.color.getRGB();
+                            pixels[py * width + px] = baseColorRGB;
                         }
                     }
                 }
@@ -226,6 +235,7 @@ public class Engine extends JPanel {
             g.drawString("Time (s): " + Environment.time_ticks * Environment.time_tick_duration / 1000, 10, 95);
             g.drawString("Coordinates: x: " + Math.round(camera.camera_x) + " y: " + Math.round(camera.camera_y) + " z: " + Math.round(camera.camera_z), 10, 125);
             g.drawString("Rotation: " + Math.abs(camera.rotate_Z % 360) + "°, " + Math.abs(camera.rotate_XY % 360) + "°", 10, 140);
+            g.drawString("Mouse position: x: " + camera.last_cursor_X + " (max: " + cWidth + "), y: " + camera.last_cursor_Y + " (max: " + cHeight + ")", 10, 155);
         }
     }
 

@@ -58,8 +58,16 @@ public class Point extends Environment implements Serializable {
         this.material = new Material(Color.getHSBColor(hue, 1f, 1f));
     }
 
+    public double distance(Point pt) {
+        return Math.sqrt(Math.pow(x-pt.x,2) + Math.pow(y-pt.y,2) + Math.pow(z-pt.z,2));
+    }
+
     @Override
     public String toString() {
         return "Point(x = " + x + "; y = " + y + "; z = " + z + ")";
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 }

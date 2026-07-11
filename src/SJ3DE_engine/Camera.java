@@ -9,6 +9,9 @@ public class Camera extends Point {
     public float camera_y = 0;
     public float camera_z = 0;
     public int debug_available = 1;
+    public int last_cursor_X = -1;
+    public int last_cursor_Y = -1;
+    public int default_brush_radius = 50;
 
     public Camera(float camera_x, float camera_y, float camera_z, double rotate_XY, double rotate_Z)
     {

@@ -13,8 +13,13 @@ Navigation: \
 `Q` go up \
 `E` go down \
 `W/A/S/D` classical navigation \
-`F1` debugging
+_To rotate camera, use right mouse button. To use tool from toolbox, use left button._
+
+Options: \
+`F1` debugging \
+`F2` toolbox
 <br />
+
 #### How can I modify observed objects?
 To modify/add/remove new objects (including importing .LAZ files) go to the `Structures` tab.
 Moreover, you can add new simple `Space` structures defined by mathematical expressions using 

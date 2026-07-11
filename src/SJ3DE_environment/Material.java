@@ -26,6 +26,11 @@ public class Material <T> implements Serializable {
     public Material(int thickness) {
         this.thickness = thickness;
     }
+    public Material(Material<T> other)
+    {
+        this.color = other.color;
+        this.thickness = other.thickness;
+    }
     public Material() {
         this.color = Color.decode("#ffffff");
     }

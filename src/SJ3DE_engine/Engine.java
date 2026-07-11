@@ -14,13 +14,12 @@ import SJ3DE_ui.LoadedStructuresPanel;
 import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;
 import SJ3DE_nature.soil.Desert1;
+import SJ3DE_ui.Toolbox;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 import java.util.List;
-
 import java.util.Timer;
 
 public class Engine extends JPanel {
@@ -50,11 +49,23 @@ public class Engine extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 if (camera.last_cursor_X != -1 && camera.last_cursor_Y != -1)
                 {
-                    int dx = e.getX() - camera.last_cursor_X;
-                    int dy = e.getY() - camera.last_cursor_Y;
-                    camera.rotate_XY += dx * 0.5;
-                    camera.rotate_Z += dy * 0.5;
-                    repaint();
+                    if(SwingUtilities.isRightMouseButton(e)) {
+                        int dx = e.getX() - camera.last_cursor_X;
+                        int dy = e.getY() - camera.last_cursor_Y;
+                        camera.rotate_XY += dx * 0.5;
+                        camera.rotate_Z += dy * 0.5;
+                        repaint();
+                    } else if (SwingUtilities.isLeftMouseButton(e)) {
+                        if (Objects.equals(Toolbox.mode, "cursor")) {
+                            int dx = e.getX() - camera.last_cursor_X;
+                            int dy = e.getY() - camera.last_cursor_Y;
+                            camera.rotate_XY += dx * 0.5;
+                            camera.rotate_Z += dy * 0.5;
+                        } else if (Objects.equals(Toolbox.mode, "brush1")) {
+                            Toolbox.isPainting = true;
+                        }
+                        repaint();
+                    }
                 }
                 camera.last_cursor_X = e.getX();
                 camera.last_cursor_Y = e.getY();
@@ -64,12 +75,25 @@ public class Engine extends JPanel {
             public void mouseMoved(MouseEvent e) {
                 camera.last_cursor_Y = e.getY();
                 camera.last_cursor_X = e.getX();
+                repaint();
             }
+
         });
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 requestFocusInWindow();
+                if (SwingUtilities.isLeftMouseButton(e) && Toolbox.mode.equals("brush1")) {
+                    Toolbox.isPainting = true;
+                    repaint();
+                }
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                requestFocusInWindow();
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    Toolbox.isPainting = false;
+                }
             }
         });
         addMouseWheelListener(new MouseWheelListener() {
@@ -114,6 +138,7 @@ public class Engine extends JPanel {
                     case KeyEvent.VK_Q -> camera.camera_z += step;
 
                     case KeyEvent.VK_F1 -> camera.debug_available = (camera.debug_available+1)%2;
+                    case KeyEvent.VK_F2 -> Toolbox.toolbox.setVisible(!Toolbox.toolbox.isVisible());
                 }
                 repaint();
             }
@@ -195,13 +220,18 @@ public class Engine extends JPanel {
                 double distanceSq = (Math.pow(camera.last_cursor_X - x2d, 2) + Math.pow(camera.last_cursor_Y - y2d, 2));
                 int baseColorRGB = p.material.color.getRGB();
 
-                if (distanceSq < camera.default_brush_radius) {
+                if (distanceSq < Toolbox.brush.radius) {
                     Color c = p.material.color;
                     baseColorRGB = new Color(
                             Math.min((int)(c.getRed() * 1.3), 255),
                             Math.min((int)(c.getGreen() * 1.3), 255),
                             Math.min((int)(c.getBlue() * 1.3), 255)
                     ).getRGB();
+
+                    if(Toolbox.isPainting) {
+                        p.material = Toolbox.brush.material;
+                        baseColorRGB = p.material.color.getRGB();
+                    }
                 }
 
                 int radius = size / 2;

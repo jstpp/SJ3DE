@@ -16,6 +16,7 @@ public class RenderTab extends JPanel {
     public RenderTab() {
         setLayout(new BorderLayout());
         add(render, BorderLayout.CENTER);
+        add(Toolbox.toolbox, BorderLayout.WEST);
         JPanel expression_pane_box = new JPanel();
         expression_pane_box.setLayout(new BorderLayout(5, 5));
         JTextPane expression_pane = new JTextPane();

@@ -54,7 +54,7 @@ public class Space extends Environment implements Serializable {
 
     public boolean materialSet(Material material) {
         for (Point p : points) {
-            p.setMaterial(material);
+            p.setMaterial(new Material(material));
         }
         return true;
     }

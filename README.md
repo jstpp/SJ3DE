@@ -1,5 +1,5 @@
 # SJ3DE
-My first attempt using Java for 3D data visualization. **Goal is to build 3D visualization tool for LiDAR measurements.**
+A Java tool for LiDAR data processing, featuring 3D visualization, custom structures, and point cloud modification.
 <hr>
 <p align="center">
     <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="CodeFactor" />

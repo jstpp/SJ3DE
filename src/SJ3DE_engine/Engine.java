@@ -229,7 +229,7 @@ public class Engine extends JPanel {
                     ).getRGB();
 
                     if(Toolbox.isPainting) {
-                        p.material = Toolbox.brush.material;
+                        p.material = new Material(Toolbox.brush.material);
                         baseColorRGB = p.material.color.getRGB();
                     }
                 }

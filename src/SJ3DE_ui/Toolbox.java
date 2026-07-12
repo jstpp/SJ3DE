@@ -16,6 +16,7 @@ public class Toolbox extends JPanel {
     private static List<Brush> brushes = new ArrayList<>();
     public static Brush brush;
 
+    public static JPanel colorPreview = new JPanel();
     public static Toolbox toolbox = new Toolbox();
 
     public Toolbox() {
@@ -34,24 +35,57 @@ public class Toolbox extends JPanel {
 
         JToggleButton Brush1Button = new JToggleButton("B");
         Brush1Button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(Box.createVerticalStrut(5));
         Brush1Button.addActionListener(e -> {
             setMode("brush1");
         });
         Toolbox.brushes.add(new Brush(new Material(Color.RED), 25));
         buttons.add(Brush1Button);
 
+//        JToggleButton MeshMergerButton = new JToggleButton("M");
+//        MeshMergerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+//        add(Box.createVerticalStrut(5));
+//        MeshMergerButton.addActionListener(e -> {
+//            setMode("meshmerger");
+//        });
+//        Toolbox.brushes.add(new Brush(new Material(Color.RED), 40));
+//        buttons.add(MeshMergerButton);
+
+        brush = Toolbox.brushes.getFirst();
+
+        Toolbox.colorPreview.setMaximumSize(new Dimension(50, 30));
+        Toolbox.colorPreview.setPreferredSize(new Dimension(50, 30));
+        Toolbox.colorPreview.setBackground(brush.material.color);
+        Toolbox.colorPreview.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        Toolbox.colorPreview.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        Toolbox.colorPreview.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                Color selectedColor = JColorChooser.showDialog(
+                        Toolbox.this,
+                        "Select brush color",
+                        Toolbox.brush.material.color
+                );
+                if (selectedColor != null) {
+                    Toolbox.brush.material.color = selectedColor;
+                    Toolbox.colorPreview.setBackground(selectedColor);
+                }
+            }
+        });
+
         for (JToggleButton btt : buttons) {
+            btt.setMaximumSize(new Dimension(50, 30));
+            btt.setPreferredSize(new Dimension(50, 30));
             add(btt, BorderLayout.SOUTH);
         }
 
-        brush = Toolbox.brushes.getFirst();
+        add(Box.createVerticalGlue());
+        add(colorPreview, BorderLayout.SOUTH);
     }
 
     public void setMode(String mode) {
         switch (mode) {
             case "cursor" -> {
-                System.out.println("cursor");
                 for (JToggleButton btt : buttons) {
                     btt.setSelected(false);
                 }
@@ -60,7 +94,6 @@ public class Toolbox extends JPanel {
                 Toolbox.mode = mode;
             }
             case "brush1" -> {
-                System.out.println("brush1");
                 for (JToggleButton btt : buttons) {
                     btt.setSelected(false);
                 }
@@ -68,6 +101,15 @@ public class Toolbox extends JPanel {
                 Toolbox.brush = brushes.get(1);
                 Toolbox.mode = mode;
             }
+//            case "meshmerger" -> {
+//                for (JToggleButton btt : buttons) {
+//                    btt.setSelected(false);
+//                }
+//                buttons.get(2).setSelected(true);
+//                Toolbox.brush = brushes.get(2);
+//                Toolbox.mode = mode;
+//            }
         }
+        Toolbox.colorPreview.setBackground(Toolbox.brush.material.color);
     }
 }

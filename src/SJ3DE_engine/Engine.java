@@ -23,8 +23,11 @@ import java.util.*;
 import java.util.List;
 import java.util.Timer;
 
+import static SJ3DE_environment.Triangle.drawTriangle;
+
 public class Engine extends JPanel {
     public List<SJ3DE_environment.Point> points = new ArrayList<SJ3DE_environment.Point>();
+    public List<SJ3DE_environment.Triangle> triangles = new ArrayList<SJ3DE_environment.Triangle>();
     public List<SJ3DE_environment.Space> objects = new ArrayList<SJ3DE_environment.Space>();
     public Camera camera = new Camera(0,0,100,0,90);
     public double f = 1000;
@@ -32,13 +35,15 @@ public class Engine extends JPanel {
     public BufferedImage canvas;
     public int[] pixels;
     private int cWidth, cHeight;
+    private List<Point> pointsUnderBrush = new ArrayList<>();
 
     public Timer time = new Timer();
 
     public Engine() {
+
+        // Initial setup
         Environment.parent_engine = this;
         time.schedule(new TimeUpdate(), 300, Environment.time_tick_duration);
-        // Initial setup
         loadExample();
         setFocusable(true);
         requestFocusInWindow();
@@ -85,6 +90,9 @@ public class Engine extends JPanel {
             public void mousePressed(MouseEvent e) {
                 requestFocusInWindow();
                 if (SwingUtilities.isLeftMouseButton(e) && Toolbox.mode.equals("brush1")) {
+                    Toolbox.isPainting = true;
+                    repaint();
+                } else if (SwingUtilities.isLeftMouseButton(e) && Toolbox.mode.equals("meshmerger")) {
                     Toolbox.isPainting = true;
                     repaint();
                 }
@@ -190,6 +198,12 @@ public class Engine extends JPanel {
         java.util.Arrays.fill(zBuffer, Double.POSITIVE_INFINITY);
         java.util.Arrays.fill(pixels, 0x000000);
 
+        for (Space object : objects) {
+            for (Triangle t : object.triangles) {
+                drawTriangle(t, width, height, zBuffer);
+            }
+        }
+
         for (Point p : points) {
             if(Math.sqrt((p.x-camera.camera_x)*(p.x-camera.camera_x)+(p.y-camera.camera_y)*(p.y-camera.camera_y)+(p.z-camera.camera_z)*(p.z-camera.camera_z))>Environment.render_radius)
             {
@@ -230,8 +244,12 @@ public class Engine extends JPanel {
                     ).getRGB();
 
                     if(Toolbox.isPainting) {
-                        p.material = new Material(Toolbox.brush.material);
-                        baseColorRGB = p.material.color.getRGB();
+                        if(Toolbox.mode.equals("brush1")) {
+                            p.material = new Material(Toolbox.brush.material);
+                            baseColorRGB = p.material.color.getRGB();
+                        } else if(Toolbox.mode.equals("meshmerger")) {
+                            pointsUnderBrush.add(p);
+                        }
                     }
                 }
 
@@ -254,6 +272,11 @@ public class Engine extends JPanel {
                 }
             }
         }
+
+        if (Objects.equals(Toolbox.mode, "meshmerger") && Toolbox.isPainting && !pointsUnderBrush.isEmpty()) {
+            Triangle.meshMerge(new ArrayList<>(pointsUnderBrush));
+            pointsUnderBrush.clear();
+        }
         g.drawImage(canvas, 0,0,null);
 
         if(camera.debug_available==1) {
@@ -261,12 +284,13 @@ public class Engine extends JPanel {
             g.setColor(Color.WHITE);
             g.drawString("Structures: " + objects.size(), 10, 20);
             g.drawString("Points: " + points.size(), 10, 35);
-            g.drawString("Render radius: " + Environment.render_radius, 10, 50);
-            g.drawString("Render gap: " + Environment.gap, 10, 65);
-            g.drawString("Time (s): " + Environment.time_ticks * Environment.time_tick_duration / 1000, 10, 95);
-            g.drawString("Coordinates: x: " + Math.round(camera.camera_x) + " y: " + Math.round(camera.camera_y) + " z: " + Math.round(camera.camera_z), 10, 125);
-            g.drawString("Rotation: " + Math.abs(camera.rotate_Z % 360) + "°, " + Math.abs(camera.rotate_XY % 360) + "°", 10, 140);
-            g.drawString("Mouse position: x: " + camera.last_cursor_X + " (max: " + cWidth + "), y: " + camera.last_cursor_Y + " (max: " + cHeight + ")", 10, 155);
+            g.drawString("Triangles: " + triangles.size(), 10, 50);
+            g.drawString("Render radius: " + Environment.render_radius, 10, 65);
+            g.drawString("Render gap: " + Environment.gap, 10, 80);
+            g.drawString("Time (s): " + Environment.time_ticks * Environment.time_tick_duration / 1000, 10, 110);
+            g.drawString("Coordinates: x: " + Math.round(camera.camera_x) + " y: " + Math.round(camera.camera_y) + " z: " + Math.round(camera.camera_z), 10, 140);
+            g.drawString("Rotation: " + Math.abs(camera.rotate_Z % 360) + "°, " + Math.abs(camera.rotate_XY % 360) + "°", 10, 155);
+            g.drawString("Mouse position: x: " + camera.last_cursor_X + " (max: " + cWidth + "), y: " + camera.last_cursor_Y + " (max: " + cHeight + ")", 10, 170);
         }
     }
 

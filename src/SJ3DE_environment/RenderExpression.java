@@ -12,7 +12,6 @@ public class RenderExpression extends Environment implements Serializable {
     public transient Expression e;
     public Point root_point = new Point(0,0,0);
     private List<RenderExpression> subexpressions = new ArrayList<RenderExpression>();
-    private String expression_type = "+";
 
     public RenderExpression(String expr, Point root_point) {
         this.expression = expr;
@@ -34,8 +33,6 @@ public class RenderExpression extends Environment implements Serializable {
         return (float) e.evaluate();
     }
 
-
-
     public List<Point> represent(float new_gap) {
         List<Point> points = new ArrayList<>();
         float z_value;
@@ -52,6 +49,7 @@ public class RenderExpression extends Environment implements Serializable {
         }
         return points;
     }
+
     public List<Point> represent() {
         List<Point> points = new ArrayList<>();
         float z_value;

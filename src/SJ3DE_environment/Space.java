@@ -13,7 +13,7 @@ public class Space extends Environment implements Serializable {
     public int age = 0;
 
     public List<Point> points = new ArrayList<Point>();
-    //public List<Triangle> triangles = new ArrayList<Triangle>();
+    public List<Triangle> triangles = new ArrayList<Triangle>();
 
     // Constructor
     public Space(float root_x, float root_y, float root_z, RenderExpression expr) {

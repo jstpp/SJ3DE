@@ -41,14 +41,14 @@ public class Toolbox extends JPanel {
         Toolbox.brushes.add(new Brush(new Material(Color.RED), 25));
         buttons.add(Brush1Button);
 
-//        JToggleButton MeshMergerButton = new JToggleButton("M");
-//        MeshMergerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        add(Box.createVerticalStrut(5));
-//        MeshMergerButton.addActionListener(e -> {
-//            setMode("meshmerger");
-//        });
-//        Toolbox.brushes.add(new Brush(new Material(Color.RED), 40));
-//        buttons.add(MeshMergerButton);
+        JToggleButton MeshMergerButton = new JToggleButton("M");
+        MeshMergerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(Box.createVerticalStrut(5));
+        MeshMergerButton.addActionListener(e -> {
+            setMode("meshmerger");
+        });
+        Toolbox.brushes.add(new Brush(new Material(Color.RED), 200));
+        buttons.add(MeshMergerButton);
 
         brush = Toolbox.brushes.getFirst();
 
@@ -101,14 +101,14 @@ public class Toolbox extends JPanel {
                 Toolbox.brush = brushes.get(1);
                 Toolbox.mode = mode;
             }
-//            case "meshmerger" -> {
-//                for (JToggleButton btt : buttons) {
-//                    btt.setSelected(false);
-//                }
-//                buttons.get(2).setSelected(true);
-//                Toolbox.brush = brushes.get(2);
-//                Toolbox.mode = mode;
-//            }
+            case "meshmerger" -> {
+                for (JToggleButton btt : buttons) {
+                    btt.setSelected(false);
+                }
+                buttons.get(2).setSelected(true);
+                Toolbox.brush = brushes.get(2);
+                Toolbox.mode = mode;
+            }
         }
         Toolbox.colorPreview.setBackground(Toolbox.brush.material.color);
     }

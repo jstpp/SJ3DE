@@ -20,6 +20,15 @@ public class Point extends Environment implements Serializable {
         this.z = z;
     }
 
+    public Point(Point other)
+    {
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
+        this.material = other.material;
+        this.parent_engine = other.parent_engine;
+    }
+
     public Point(float x, float y, float z, Material material)
     {
         this.x = x;

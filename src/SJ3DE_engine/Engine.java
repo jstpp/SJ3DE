@@ -10,6 +10,7 @@ import SJ3DE_lidar.PCloud;
 import SJ3DE_nature.flora.Tree1.Tree1;
 import SJ3DE_nature.hydro.Sea1;
 import SJ3DE_nature.soil.Lawn1;
+import SJ3DE_stereometry.Cone;
 import SJ3DE_ui.LoadedStructuresPanel;
 import SJ3DE_ui.RenderTab;
 import SJ3DE_ui.SettingsPanel;

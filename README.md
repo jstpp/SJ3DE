@@ -1,6 +1,6 @@
 # SJ3DE
 A Java tool for LiDAR data processing, featuring 3D visualization, custom structures, and point cloud modification.
-<hr>
+
 <p align="center">
     <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="CodeFactor" />
     <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/jstpp/SJ3DE?style=for-the-badge">
